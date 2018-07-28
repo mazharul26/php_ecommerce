@@ -1,0 +1,54 @@
+/*
+ * cart
+ */
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `cart` (IN `pid` INT)  NO SQL
+SELECT
+    product.id,
+    product.title,
+    product.price,
+    product.featuredImage
+FROM
+    product
+WHERE
+    product.id = pid$$
+
+DELIMITER ;
+
+/*
+ * my_order_details
+ */
+
+
+SELECT
+    sales_details.id,
+    sales_details.productid,
+    product.featuredImage,
+    product.title,
+    sales_details.quantity,
+    product.price
+FROM
+    sales_details,
+    product
+WHERE
+    sales_details.salesid = sales_id
+    AND
+    product.id = sales_details.productid
+
+
+
+
+
+SELECT
+    affilaite_payout.id,
+    affilaite_payout.affiliate_user_id,
+    affilaite_payout.pay_amount,
+    affilaite_payout.pay_date
+FROM
+    `affilaite_payout`
+WHERE
+    `affiliate_user_id` = affid
+ORDER BY
+    `affilaite_payout`.`pay_date`
+DESC
+LIMIT 1

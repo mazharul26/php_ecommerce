@@ -1,0 +1,334 @@
+/*
+ * city1_view
+ */
+CREATE VIEW city1_view AS SELECT
+    `city`.`id` AS `id`,
+    `city`.`city_name` AS `city_name`,
+    `country`.`country_name` AS `country_name`
+FROM
+    (`city`
+JOIN `country`)
+WHERE
+    (`city`.`countryid` = `country`.`id`);
+
+
+/*
+ * delivery_view
+ */
+CREATE VIEW delivery_view AS SELECT
+    `delivery`.`id` AS `id`,
+    `delivery`.`charge` AS `charge`,
+    `city`.`city_name` AS `city_name`
+FROM
+    (`delivery`
+JOIN `city`)
+WHERE
+    (`delivery`.`cityid` = `city`.`id`);
+
+
+
+/*
+ * delivery_view
+ */
+CREATE VIEW delivery_view AS SELECT
+    `delivery`.`id` AS `id`,
+    `delivery`.`charge` AS `charge`,
+    `city`.`city_name` AS `city_name`
+FROM
+    (`delivery`
+JOIN `city`)
+WHERE
+    (`delivery`.`cityid` = `city`.`id`);
+
+
+/*
+ * product_view
+ */
+CREATE VIEW product_view AS
+SELECT
+    `product`.`id` AS `id`,
+    `product`.`title` AS `title`,
+    `product`.`description` AS `description`,
+    `users`.`name` AS `name`,
+    `product`.`price` AS `price`,
+    `product`.`stock` AS `stock`,
+    `category`.`category_name` AS `category_name`,
+    `subcategory`.`subcategory_name` AS `subcategory_name`,
+    `unit`.`unit_name` AS `unit_name`,
+    `product`.`featuredimage` AS `featuredImage`
+FROM
+    (
+        (
+            (
+                (`product`
+            JOIN `users`)
+            JOIN `subcategory`
+            ) JOIN `unit`
+        ) JOIN `category`
+    ) WHERE
+    (
+        (`product`.`userid` = `users`.`id`) AND(
+            `product`.`subcategoryid` = `subcategory`.`id`
+        ) AND(`product`.`unitid` = `unit`.`id`) AND(
+            `subcategory`.`categoryid` = `category`.`id`
+        )
+    );
+
+
+/*
+ * sales_details_view
+ */
+CREATE VIEW sales_details_view AS
+SELECT
+    `media`.`product`.`title` AS `title`,
+    `media`.`sales_details`.`id` AS `id`,
+    `media`.`sales_details`.`quantity` AS `quantity`
+FROM
+    (
+        `media`.`product`
+    JOIN `media`.`sales_details`
+    )
+WHERE
+    (
+        `media`.`sales_details`.`productid` = `media`.`product`.`id`
+    );
+
+/*
+ * subcategory_view_view
+ */
+CREATE VIEW subcategory_view AS
+SELECT
+    `subcategory`.`id` AS `id`,
+    `subcategory`.`subcategory_name` AS `subcategory_name`,
+    `category`.`category_name` AS `category_name`
+FROM
+    (`subcategory`
+JOIN `category`)
+WHERE
+    (
+        `subcategory`.`categoryid` = `category`.`id`
+    );
+
+
+
+/*
+ * single_product
+ */
+DROP VIEW single_product;
+CREATE VIEW single_product AS
+SELECT
+    `product`.`id` AS `id`,
+    `product`.`title` AS `title`,
+    `product`.`brand_id` AS `brand_id`,
+    `brands`.`brand_name` AS `brand_name`,
+    `product`.`short_description` AS `short_description`,
+    `product`.`description` AS `description`,
+    `users`.`name` AS `name`,
+    `product`.`price` AS `price`,
+    `product`.`stock` AS `stock`,
+    `category`.`id` AS `category_id`,
+    `category`.`category_name` AS `category_name`,
+    `product`.`subcategoryid` AS `subcategoryid`,
+    `subcategory`.`subcategory_name` AS `subcategory_name`,
+    `unit`.`unit_name` AS `unit_name`,
+    `product`.`featuredimage` AS `featuredImage`,
+    `product`.`pics` AS `pics`
+FROM
+    (
+        (
+            (
+                (
+                    (
+                        (`product`
+                    JOIN `category`)
+                    JOIN `subcategory`
+                    ) JOIN `brands`
+                ) JOIN `users`
+            ) JOIN `product_featured`
+        ) JOIN `unit`
+    ) WHERE
+    (
+        (`product`.`userid` = `users`.`id`) AND(
+            `product`.`subcategoryid` = `subcategory`.`id`
+        ) AND(`product`.`unitid` = `unit`.`id`) AND(
+            `subcategory`.`categoryid` = `category`.`id`
+        ) AND(`brands`.`id` = `product`.`brand_id`)
+    )
+
+
+/*
+ * sales_views
+ */
+CREATE VIEW sales_views AS
+SELECT
+    `media`.`sales`.`id` AS `id`,
+    `media`.`sales`.`sale_date` AS `sale_date`,
+    `media`.`shipping`.`address` AS `address`,
+    `media`.`currency`.`rate` AS `currency_rate`,
+    `media`.`payment`.`payment_name` AS `payment_name`,
+    `media`.`shipping`.`customerid` AS `customerid`
+FROM
+    `media`.`users`
+JOIN(
+        (
+            (
+                `media`.`sales`
+            JOIN `media`.`shipping`
+            )
+        JOIN `media`.`currency`
+        )
+    JOIN `media`.`payment`
+    )
+WHERE
+    (
+        (
+            `media`.`sales`.`shippingid` = `media`.`shipping`.`id`
+        ) AND(
+            `media`.`sales`.`currencyid` = `media`.`currency`.`id`
+        ) AND(
+            `media`.`sales`.`paymentid` = `media`.`payment`.`id`
+        ) AND(
+            `media`.`shipping`.`customerid` = `media`.`users`.`id`
+        )
+    )
+
+
+
+/*
+ * seller_my_products
+ */
+
+CREATE VIEW seller_my_products AS
+SELECT
+    product.id ids,
+    product.title,
+    product.description,
+    users.id,
+    users.name,
+    product.price,
+    product.stock,
+    category.category_name,
+    subcategory.subcategory_name,
+    unit.unit_name,
+    product.featuredImage
+FROM
+    product,
+    users,
+    subcategory,
+    unit,
+    category
+WHERE
+    product.userid = users.id
+    AND
+    product.subcategoryid = subcategory.id
+    AND
+    product.unitid = unit.id
+    AND
+    subcategory.categoryid = category.id
+
+
+/*
+ * seller_my_sales
+ */
+DROP VIEW seller_my_sales;
+CREATE VIEW seller_my_sales AS
+SELECT
+    sales_details.id,
+    product.title,
+    sales_details.productid,
+    sales_details.quantity,
+    sales_details.salesid,
+    sales.sale_date,
+    product.price,
+    product.featuredImage,
+    sales_details.sellerid
+FROM
+    sales_details,
+    product,
+    sales
+WHERE
+    product.id = sales_details.productid
+    AND
+    sales.id = sales_details.salesid
+
+
+
+/*
+ * shipping_cost
+ */
+SELECT
+    `media`.`delivery`.`id` AS `id`,
+    `media`.`delivery`.`charge` AS `charge`,
+    `media`.`city`.`city_name` AS `city_name`,
+    `media`.`country`.`country_name` AS `country_name`
+FROM
+    `media`.`delivery`
+JOIN `media`.`city` JOIN `media`.`country` WHERE
+    (
+        (
+            `media`.`city`.`id` = `media`.`delivery`.`cityid`
+        ) AND(
+            `media`.`country`.`id` = `media`.`city`.`countryid`
+        )
+    )
+
+
+
+
+
+SELECT
+    shipping.id AS id,
+    shipping.name AS name,
+    shipping.contact AS contact,
+    shipping.cityid AS cityid,
+    shipping.customerid AS customerid,
+    city.city_name AS city_name,
+    city.delivery_charge AS delivery_charge
+FROM
+    shipping, city
+WHERE
+	shipping.cityid = city.id
+
+
+
+
+/*
+ * Affiliate ref
+ */
+
+DROP VIEW affiliates_sales_ref_view;
+CREATE VIEW affiliates_sales_ref_view AS
+SELECT
+    sales_details.id,
+    sales_details.productid AS productId,
+    product.title as productTitle,
+    product.price,
+    product.featuredImage,
+    sales_details.quantity,
+    sales.sale_date,
+    sales.affiliate_id AS affiliates_id,
+    affiliates.userid AS affiliates_user_id,
+    affiliates.affiliate_ref as affiliates_ref_code
+FROM
+    sales_details,
+    sales,
+    affiliates,
+    product
+WHERE
+sales_details.salesid = sales.id
+AND
+sales.affiliate_id = affiliates.id
+
+
+
+
+
+CREATE VIEW affilaite_last_pay_date AS
+SELECT
+    *
+FROM
+    `affilaite_payout`
+ORDER BY
+    `affilaite_payout`.`pay_date`
+DESC
+LIMIT 1

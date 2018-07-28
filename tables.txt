@@ -1,0 +1,21 @@
+SELECT
+    shipping.id AS id,
+    shipping.name AS name,
+    shipping.contact AS contact,
+    shipping.cityid AS cityid,
+    shipping.customerid AS customerid,
+    city.city_name AS city_name,
+    city.delivery_charge AS delivery_charge
+FROM
+    shipping
+WHERE
+
+        shipping.cityid = city.id
+
+
+
+////Here review table code------
+
+CREATE TABLE review_insert(id int not null AUTO_INCREMENT PRIMARY KEY  ,name varchar(100) not null, email varchar(100) not null UNIQUE,description varchar(255) not null);
+
+date add korte hobe defold currenttime;*********
